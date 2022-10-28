@@ -7,7 +7,6 @@ using System.IO;
 using UnityEngine.UI;
 using TMPro;
 using System.Globalization;
-using static System.Net.Mime.MediaTypeNames;
 using UnityEngine.Rendering;
 
 [RequireComponent(typeof(Camera))]
@@ -42,17 +41,15 @@ public class RenderToTexture : MonoBehaviour
 
 
         cam = GetComponent<Camera>();
-        cam.SetStereoViewMatrix(Camera.StereoscopicEye.Right, cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
-        cam.SetStereoViewMatrix(Camera.StereoscopicEye.Right, cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
+        //cam.SetStereoViewMatrix(Camera.StereoscopicEye.Left, Matrix4x4.identity);
+        //cam.SetStereoViewMatrix(Camera.StereoscopicEye.Right, cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
+        Debug.Log(XRSettings.enabled);
         StartSubsystem();
+        Debug.Log(XRSettings.enabled);
         colorTex = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
         colorTex.autoGenerateMips = false;
         colorTex.anisoLevel = 0;
         colorTex.name = "ColorTexture";
-        //colorTex1 = new RenderTexture(Screen.width, Screen.height, 0, RenderTextureFormat.ARGB32);
-        //colorTex1.autoGenerateMips = false;
-        //colorTex1.anisoLevel = 0;
-        //colorTex1.name = "ColorTexture1";
         textinfo.text = "" + XRSettings.enabled;
         //if (XRSettings.enabled)
         //{
@@ -101,26 +98,7 @@ public class RenderToTexture : MonoBehaviour
 
     void Update()
     {
-        //CommandBuffer.SetSinglePassStereo(SinglePassStereoMode.SideBySide)
-        // elapsed += Time.deltaTime;
-        // if (elapsed>1) {
-        // elapsed = elapsed % 1f;
-        //  Debug.Log(displays[0].GetRenderPassCount());
-        //colorTex = displays[0].GetRenderTextureForRenderPass(0);
-        // RenderTexture.active = displays[0].GetRenderTextureForRenderPass(0);
-        //Texture2D tex = new Texture2D(Screen.width/2, Screen.height/2, TextureFormat.ARGB32, false);
-        //  tex.ReadPixels(new Rect(0, 0, Screen.width/2, Screen.height/2), 0, 0);
-        //RenderTexture.active = null;
-        //   tex.Apply();
-        //   Graphics.Blit(tex,colorTex);
-        //  Destroy(tex);
-        //byte[] data = tex.EncodeToPNG();
-        //Debug.Log(data.Length);
-        //Destroy(tex);
-        //count += 1;
-        //File.WriteAllBytes(Application.persistentDataPath + "/sourceTexture_" + count + ".png", data);
-        //  }
-        //  colorTex1 = displays[0].GetRenderTextureForRenderPass(0);
+
 
         //cam.Render();
 
@@ -146,7 +124,7 @@ public class RenderToTexture : MonoBehaviour
 
             /* { 1.00000    0.00000 0.00000 1.00000
 0.00000 1.00000 0.00000 -1.00000
-0.00000 0.00000 -1.00000    -13.91000
+0.00000 0.00000 -1.00000    -13.91000       // for left eye, alternating between this and identity like
 0.00000 0.00000 0.00000 1.00000};*/
 
             /* 1.00000 0.00000 0.00000 - 1.00000
@@ -163,7 +141,6 @@ public class RenderToTexture : MonoBehaviour
             //  Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
             /*            XRRenderPass xrp;
                         displays[0].GetRenderPass(0, out xrp);
-                        
                         textinfo.text = "" + xrp.GetRenderParameterCount();
                         XRRenderParameter xrpr1, xrpr2;
                         xrp.GetRenderParameter(cam, 0, out xrpr1);
@@ -173,7 +150,6 @@ public class RenderToTexture : MonoBehaviour
                         Debug.Log(xrpr2.projection);
                        // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right));*/
 
-            //colorTex1 = displays[0].GetRenderTextureForRenderPass(1);
             /*            RenderTexture lastActive = RenderTexture.active;
                         RenderTexture.active= displays[0].GetRenderTextureForRenderPass(0);
                         Texture2D texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
@@ -183,17 +159,6 @@ public class RenderToTexture : MonoBehaviour
                         File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/sourceTexture0_" + count + ".png", dat);
                         Destroy(texy);
                         RenderTexture.active = lastActive;*/
-            //RenderTexture.active = displays[0].GetRenderTextureForRenderPass(1);
-            //Texture2D texy1 = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
-            //texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
-            //texy.Apply();
-            //byte[] dat1 = texy1.EncodeToPNG();
-            //textinfo.text = "" + displays[0].GetRenderPassCount();
-            //File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/sourceTexture1_" + count + ".png", dat);
-
-            ////  Graphics.Blit(texy, colorTex1);
-            //Destroy(texy);
-            //RenderTexture.active = lastActive;
         }
         StartCoroutine(createtexture());
     }
@@ -226,38 +191,7 @@ public class RenderToTexture : MonoBehaviour
     {
         //if (cam.name != Camera.current.name) return;
         // Graphics.Blit(source, depthTex, PostprocessMaterial);
-        //RenderTexture.active = displays[0].GetRenderTextureForRenderPass(0);
-        //Texture2D tex = new Texture2D(Screen.width / 2, Screen.height / 2, TextureFormat.ARGB32, false);
-        //tex.ReadPixels(new Rect(0, 0, Screen.width / 2, Screen.height / 2), 0, 0);
-        //tex.Apply();
-        //byte[] dat = tex.EncodeToPNG();
-        //Debug.Log(dat.Length);
-        //img.texture = (Texture)tex;
-        //Graphics.Blit(tex, colorTex);
-        //Destroy(tex);
-        //colorTex1 = RenderTexture.active;
-        //RenderTexture.active = displays[0].GetRenderTextureForRenderPass(0);
-        //elapsed += Time.deltaTime;
-        //if (elapsed > 1)
-        //{
-        //    elapsed = elapsed % 1f;
-        //    count += 1;
-/*            colorTex = displays[0].GetRenderTextureForRenderPass(0);
-            RenderTexture lastActive = RenderTexture.active;
-            RenderTexture.active = displays[0].GetRenderTextureForRenderPass(0);
-            Texture2D texy = new Texture2D(Screen.width / 2, Screen.height / 2, TextureFormat.ARGB32, false);
-            texy.ReadPixels(new Rect(0, 0, Screen.width / 2, Screen.height / 2), 0, 0);
-            texy.Apply();
-            byte[] dat = texy.EncodeToPNG();
-            Debug.Log(dat.Length);
-            File.WriteAllBytes(Application.persistentDataPath + "/sourceTexture_" + count + ".png", dat);
-            Graphics.Blit(texy, colorTex1);
-            Destroy(texy);*/
-        //    RenderTexture.active = lastActive;
-        //}
         Graphics.Blit(source, destination);
-
-        //  colorTex1 = displays[0].GetRenderTextureForRenderPass(0);
     }
     void setMatrix()
     {
