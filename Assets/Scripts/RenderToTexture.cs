@@ -20,6 +20,8 @@ public class RenderToTexture : MonoBehaviour
 
     [HideInInspector]
     public RenderTexture depthTex;
+    public GameObject forviewmatr;
+    private bool once=true;
     int count = 0;
     Camera cam;
     Shader PostprocessShader;
@@ -35,11 +37,14 @@ public class RenderToTexture : MonoBehaviour
 
 
 
-        StartSubsystem();
+
 
 
 
         cam = GetComponent<Camera>();
+        cam.SetStereoViewMatrix(Camera.StereoscopicEye.Right, cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
+        cam.SetStereoViewMatrix(Camera.StereoscopicEye.Right, cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
+        StartSubsystem();
         colorTex = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
         colorTex.autoGenerateMips = false;
         colorTex.anisoLevel = 0;
@@ -88,6 +93,9 @@ public class RenderToTexture : MonoBehaviour
         //{
         //    Debug.LogError("[GR]: Did not find Shader for Depth Post Processing!");
         //}
+
+
+        
         StartCoroutine(createtexture());
     }
 
@@ -121,29 +129,60 @@ public class RenderToTexture : MonoBehaviour
     IEnumerator createtexture()
     {
         yield return new WaitForEndOfFrame();
+        if (once)
+        {
+
+            //   setMatrix();
+            once = false;
+        }
         elapsed += Time.deltaTime;
+        colorTex = displays[0].GetRenderTextureForRenderPass(0);
         if (elapsed > 1)
         {
             elapsed = elapsed % 1f;
-            XRRenderPass xrp;
-            displays[0].GetRenderPass(0, out xrp);
-            textinfo.text= ""+xrp.GetRenderParameterCount();
-/*            XRRenderParameter xrpr1, xrpr2;
-            xrp.GetRenderParameter(cam, 0, out xrpr1);
-            xrp.GetRenderParameter(cam, 1, out xrpr2);
-            Debug.Log(xrpr1.projection);
-            Debug.Log(xrpr2.projection);*/
+
+            Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
+            Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
+
+            /* { 1.00000    0.00000 0.00000 1.00000
+0.00000 1.00000 0.00000 -1.00000
+0.00000 0.00000 -1.00000    -13.91000
+0.00000 0.00000 0.00000 1.00000};*/
+
+            /* 1.00000 0.00000 0.00000 - 1.00000
+ 0.00000 1.00000 0.00000 - 1.00000
+ 0.00000 0.00000 - 1.00000 - 13.91000
+ 0.00000 0.00000 0.00000 1.00000*/
+
+            /*          Matrix4x4 viewleft = CreateViewMatrix(forviewmatr.transform.position, forviewmatr.transform.rotation);
+                      Debug.Log(viewleft);
+                      cam.SetStereoViewMatrix(Camera.StereoscopicEye.Left, viewleft);*/
+            //    Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
+            //   Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
+            //  cam.SetStereoViewMatrix(Camera.StereoscopicEye.Left,Matrix4x4.identity);
+            //  Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
+            /*            XRRenderPass xrp;
+                        displays[0].GetRenderPass(0, out xrp);
+                        
+                        textinfo.text = "" + xrp.GetRenderParameterCount();
+                        XRRenderParameter xrpr1, xrpr2;
+                        xrp.GetRenderParameter(cam, 0, out xrpr1);
+                        xrp.GetRenderParameter(cam, 1, out xrpr2);
+                        Debug.Log(xrpr1.projection);
+                       // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left)); They are the same
+                        Debug.Log(xrpr2.projection);
+                       // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right));*/
 
             //colorTex1 = displays[0].GetRenderTextureForRenderPass(1);
-            RenderTexture lastActive = RenderTexture.active;
-            RenderTexture.active= displays[0].GetRenderTextureForRenderPass(0);
-            Texture2D texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
-            texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
-            texy.Apply();
-            byte[] dat = texy.EncodeToPNG();
-            File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/sourceTexture0_" + count + ".png", dat);
-            Destroy(texy);
-            RenderTexture.active = lastActive;
+            /*            RenderTexture lastActive = RenderTexture.active;
+                        RenderTexture.active= displays[0].GetRenderTextureForRenderPass(0);
+                        Texture2D texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
+                        texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
+                        texy.Apply();
+                        byte[] dat = texy.EncodeToPNG();
+                        File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/sourceTexture0_" + count + ".png", dat);
+                        Destroy(texy);
+                        RenderTexture.active = lastActive;*/
             //RenderTexture.active = displays[0].GetRenderTextureForRenderPass(1);
             //Texture2D texy1 = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
             //texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
@@ -216,9 +255,24 @@ public class RenderToTexture : MonoBehaviour
             Destroy(texy);*/
         //    RenderTexture.active = lastActive;
         //}
-        colorTex = displays[0].GetRenderTextureForRenderPass(0);
         Graphics.Blit(source, destination);
 
         //  colorTex1 = displays[0].GetRenderTextureForRenderPass(0);
+    }
+    void setMatrix()
+    {
+        Matrix4x4 leftviewmatrix = new Matrix4x4();
+        leftviewmatrix.SetColumn(0, new Vector4(1, 0, 0, 1));
+        leftviewmatrix.SetColumn(1, new Vector4(0, 1, 0, -1));
+        leftviewmatrix.SetColumn(2, new Vector4(0, 0, -1, (float)-13.91));
+        leftviewmatrix.SetColumn(3, new Vector4(0, 0, 0, 1));
+
+        Matrix4x4 rightviewmatrix = new Matrix4x4();
+        rightviewmatrix.SetColumn(0, new Vector4(1, 0, 0, -1));
+        rightviewmatrix.SetColumn(1, new Vector4(0, 1, 0, -1));
+        rightviewmatrix.SetColumn(2, new Vector4(0, 0, -1, (float)-13.91));
+        rightviewmatrix.SetColumn(3, new Vector4(0, 0, 0, 1));
+        cam.SetStereoProjectionMatrix(Camera.StereoscopicEye.Left, leftviewmatrix);
+        cam.SetStereoProjectionMatrix(Camera.StereoscopicEye.Right, rightviewmatrix);
     }
 }

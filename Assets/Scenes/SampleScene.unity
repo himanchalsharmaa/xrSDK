@@ -524,6 +524,7 @@ MonoBehaviour:
   colorTex: {fileID: 0}
   colorTex1: {fileID: 0}
   depthTex: {fileID: 0}
+  forviewmatr: {fileID: 1854025440}
   img: {fileID: 0}
   textinfo: {fileID: 1671490196}
 --- !u!1 &1671490194
@@ -786,7 +787,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1880207976
 RectTransform:
   m_ObjectHideFlags: 0
