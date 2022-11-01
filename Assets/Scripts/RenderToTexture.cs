@@ -57,7 +57,7 @@ public class RenderToTexture : MonoBehaviour
         //  //  colorTex.width *= 2;
         SubsystemManager.GetSubsystems(displays);
        // textinfo.text = "" + displays[0].supportedTextureLayouts;
-        displays[0].singlePassRenderingDisabled = false;
+        displays[0].singlePassRenderingDisabled = true;
        //colorTex.vrUsage = VRTextureUsage.TwoEyes;
         //    if (displays.Count > 0)
         //    {
@@ -119,8 +119,8 @@ public class RenderToTexture : MonoBehaviour
         {
             elapsed = elapsed % 1f;
 
-            Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
-            Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
+            //Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
+            //Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
 
             /* { 1.00000    0.00000 0.00000 1.00000
 0.00000 1.00000 0.00000 -1.00000
@@ -139,26 +139,31 @@ public class RenderToTexture : MonoBehaviour
             //   Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Right));
             //  cam.SetStereoViewMatrix(Camera.StereoscopicEye.Left,Matrix4x4.identity);
             //  Debug.Log(cam.GetStereoViewMatrix(Camera.StereoscopicEye.Left));
-            /*            XRRenderPass xrp;
-                        displays[0].GetRenderPass(0, out xrp);
-                        textinfo.text = "" + xrp.GetRenderParameterCount();
+                        XRRenderPass xrp1,xrp2;
+                        displays[0].GetRenderPass(0, out xrp1);
+                        displays[0].GetRenderPass(1, out xrp2);
+            //textinfo.text = "" + xrp.GetRenderParameterCount();
                         XRRenderParameter xrpr1, xrpr2;
-                        xrp.GetRenderParameter(cam, 0, out xrpr1);
-                        xrp.GetRenderParameter(cam, 1, out xrpr2);
-                        Debug.Log(xrpr1.projection);
-                       // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left)); They are the same
-                        Debug.Log(xrpr2.projection);
-                       // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right));*/
+                        xrp1.GetRenderParameter(cam, 0, out xrpr1);
+                        xrp2.GetRenderParameter(cam, 0, out xrpr2);
+            Debug.Log(xrpr1.projection);
+            Debug.Log(xrpr2.projection);
+            //xrp.GetRenderParameter(cam, 1, out xrpr2);
+            //Debug.Log(xrpr1.view);
+            // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left)); They are the same
+            //Debug.Log(xrpr2 .view);
+            // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right));
 
-            /*            RenderTexture lastActive = RenderTexture.active;
-                        RenderTexture.active= displays[0].GetRenderTextureForRenderPass(0);
-                        Texture2D texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
-                        texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
-                        texy.Apply();
-                        byte[] dat = texy.EncodeToPNG();
-                        File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/sourceTexture0_" + count + ".png", dat);
-                        Destroy(texy);
-                        RenderTexture.active = lastActive;*/
+            RenderTexture lastActive = RenderTexture.active;
+            RenderTexture.active = displays[0].GetRenderTextureForRenderPass(0);
+            Texture2D texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
+            texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
+            texy.Apply();
+            byte[] dat = texy.EncodeToPNG();
+            File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/sourceTexture0_" + count + ".png", dat);
+            Destroy(texy);
+            RenderTexture.active = lastActive;
+             Debug.Log("WITTEN");
         }
         StartCoroutine(createtexture());
     }
