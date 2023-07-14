@@ -57,7 +57,7 @@ public class RenderToTexture : MonoBehaviour
 
         SubsystemManager.GetSubsystems(displays);
         Debug.Log(UnityEngine.Application.persistentDataPath);
-        displays[0].textureLayout = TextureLayout.SingleTexture2D;
+        displays[0].textureLayout = TextureLayout.SeparateTexture2Ds;
 /*        Debug.Log(Screen.height);
         Debug.Log(Screen.width);*/
 
@@ -107,14 +107,16 @@ public class RenderToTexture : MonoBehaviour
             once = false;
         }
         elapsed += Time.deltaTime;
-      //  Graphics.CopyTexture(displays[0].GetRenderTextureForRenderPass(0),0,0,colorTex,0,0);
-         colorTex = displays[0].GetRenderTextureForRenderPass(0);
+        
+     //   Graphics.CopyTexture(displays[0].GetRenderTextureForRenderPass(0),0,0,colorTex,0,0);
+        colorTex = displays[0].GetRenderTextureForRenderPass(0);
       //  depthTex = displays[0].GetRenderTextureForRenderPass(0);
         //depthTex = displays[0].GetRenderTextureForRenderPass(1);
         // Graphics.Blit(displays[0].GetRenderTextureForRenderPass(0), colorTex, PostprocessMaterial);
          Graphics.Blit(colorTex, depthTex, PostprocessMaterial);
         if (elapsed > 1)
         {
+            Debug.Log(displays[0].GetRenderTextureForRenderPass(0).dimension);
             elapsed = elapsed % 1f;
             //     Debug.Log(displays[0].GetRenderPassCount());
             /*            Debug.Log(displays[0].GetRenderTextureForRenderPass(0).width);
@@ -159,8 +161,8 @@ public class RenderToTexture : MonoBehaviour
             // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Left)); They are the same
             //Debug.Log(xrpr2 .view);
             // Debug.Log(cam.GetStereoProjectionMatrix(Camera.StereoscopicEye.Right));
-           // Debug.Log("HERE1");
-/*            RenderTexture lastActive = RenderTexture.active;
+            // Debug.Log("HERE1");
+            RenderTexture lastActive = RenderTexture.active;
             RenderTexture.active = colorTex;
             Texture2D texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
             texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
@@ -168,19 +170,19 @@ public class RenderToTexture : MonoBehaviour
             byte[] dat = texy.EncodeToPNG();
             File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/colortex0" + count + ".png", dat);
             Destroy(texy);
-          //  Debug.Log("HERE2");
+            //  Debug.Log("HERE2");
             RenderTexture.active = depthTex;
             texy = new Texture2D(RenderTexture.active.width, RenderTexture.active.height);
             texy.ReadPixels(new Rect(0, 0, RenderTexture.active.width, RenderTexture.active.height), 0, 0);
             texy.Apply();
             dat = texy.EncodeToPNG();
-           // Debug.Log("HERE3");
+            // Debug.Log("HERE3");
             File.WriteAllBytes(UnityEngine.Application.persistentDataPath + "/depth0" + count + ".png", dat);
             Debug.Log("HERE4");
             Destroy(texy);
-            RenderTexture.active = lastActive;*/
-          //  Debug.Log("WITTEN");
-           // count += 1;
+            RenderTexture.active = lastActive;
+            //  Debug.Log("WITTEN");
+            // count += 1;
         }
         StartCoroutine(createtexture());
     }
