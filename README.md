@@ -1,4 +1,4 @@
-# xrSDK
+# Display Provider
 
 A custom display provider for Windows Unity made using Unity's XR SDK to support multi-pass and single pass rendering with functions to change projection and view matrix values for each eye.<br>
 Used a single camera to get output for both eyes.<br>
